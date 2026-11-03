@@ -1,0 +1,6 @@
+{
+  "name": "AL BADAR PUBLIC HIGH SCHOOL",
+  "description": "AL BADAR PUBLIC HIGH SCHOOL is a premier educational institution in Pakpattan, Pakistan. Offering quality education from primary to intermediate levels across Boys Campus, Girls Campus, and Choti Dunya Campus.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

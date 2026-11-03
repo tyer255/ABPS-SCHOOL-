@@ -1,0 +1,8 @@
+<svg width="221" height="50" viewBox="0 0 221 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .t1 { font-family: 'Cormorant Garamond', 'Georgia', serif; font-weight: 700; font-size: 26px; fill: #FAF7F3; letter-spacing: 3px; }
+    .t2 { font-family: 'Cormorant Garamond', 'Georgia', serif; font-weight: 600; font-size: 12px; fill: #FAF7F3; letter-spacing: 2.2px; }
+  </style>
+  <text x="110.5" y="25" text-anchor="middle" class="t1">AL BADAR</text>
+  <text x="110.5" y="43" text-anchor="middle" class="t2">PUBLIC HIGH SCHOOL</text>
+</svg>
