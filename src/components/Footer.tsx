@@ -28,11 +28,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                     <div className="fsElementContent">
                       <article className="fsResource fsResourceTypeImage">
                         <figure>
-                          <picture style={{ backgroundImage: 'url("/uploaded/themes/default_26/images/hr-logo.svg")', backgroundSize: '220px 220px' }}>
+                          <picture style={{ backgroundImage: `url("${SCHOOL_IDENTITY.logoUrl}")`, backgroundSize: '220px 220px', backgroundPosition: 'center', borderRadius: '50%' }}>
                             <img
                               alt="AL BADAR PUBLIC HIGH SCHOOL Pakpattan Crest"
                               loading="lazy"
-                              src="/uploaded/themes/default_26/images/hr-logo.svg"
+                              src={SCHOOL_IDENTITY.logoUrl}
+                              style={{ borderRadius: '50%', objectFit: 'cover' }}
                             />
                           </picture>
                         </figure>

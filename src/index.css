@@ -188,28 +188,97 @@ body.fsLiveMode [class*="card-"].fsContent.fsElement > * {
   color: #ffc111 !important;
 }
 
-/* Ensure timeline flex track centers active slide with peeking neighbors */
+/* Focus Mode Selected Element & Smooth Horizontal Sliding Timeline Track */
+div#root:nth-of-type(1) > div#fsPageWrapper:nth-of-type(1) > div#fsPageBodyWrapper:nth-of-type(2) > div#fsPageBody:nth-of-type(1) > main#fsPageContent:nth-of-type(1) > div#fsEl_11583:nth-of-type(1) > div#fsEl_11584:nth-of-type(1) > div#fsEl_11953:nth-of-type(3) > div:nth-of-type(1) > div#fsEl_12074:nth-of-type(2) > div:nth-of-type(1) {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+
+.timeline.fsPostElement.fsSlideshow .slideshow-index .slideshow-index-inner {
+  width: 100% !important;
+  max-width: 1240px !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+.timeline.fsPostElement.fsSlideshow .slideshow-index ul {
+  width: 100% !important;
+  max-width: 1200px !important;
+}
+
+.abps-timeline-viewport {
+  --slide-w: 920px;
+  --slide-gap: 48px;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  overflow: hidden !important;
+  position: relative !important;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.abps-timeline-slick-list {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 16px 0 28px !important;
+  overflow: visible !important;
+}
+
 .abps-timeline-track {
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  gap: 48px !important;
-  width: 100% !important;
+  justify-content: flex-start !important;
+  gap: var(--slide-gap) !important;
+  width: max-content !important;
   position: relative !important;
+  left: 50% !important;
+  will-change: transform;
+  transform: translate3d(
+    calc(-1 * var(--active-track-idx, 7) * (var(--slide-w) + var(--slide-gap)) - (var(--slide-w) / 2)),
+    0,
+    0
+  ) !important;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.abps-timeline-track.is-resetting {
+  transition: none !important;
 }
 
 .abps-timeline-track > article {
-  flex: 0 0 auto !important;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  flex: 0 0 var(--slide-w) !important;
+  width: var(--slide-w) !important;
+  margin: 0 !important;
+  will-change: height, transform, opacity;
+  transition:
+    height 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.5s ease,
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s ease !important;
+}
+
+@media (max-width: 1199px) {
+  .abps-timeline-viewport {
+    --slide-w: 760px;
+    --slide-gap: 32px;
+  }
 }
 
 @media (max-width: 999px) {
-  .abps-timeline-track > article:not(.slick-current) {
-    display: none !important;
+  .abps-timeline-viewport {
+    --slide-w: min(640px, calc(100vw - 64px));
+    --slide-gap: 24px;
   }
-  .abps-timeline-track > article.slick-current {
-    width: 100% !important;
-    max-width: 680px !important;
+}
+
+@media (max-width: 639px) {
+  .abps-timeline-viewport {
+    --slide-w: calc(100vw - 40px);
+    --slide-gap: 16px;
   }
 }
 
@@ -328,3 +397,516 @@ body.fsLiveMode [class*="card-"].fsContent.fsElement > * {
     padding: 40px 28px 48px;
   }
 }
+
+/* ==========================================================================
+   1. OFFICIAL AL BADAR PUBLIC HIGH SCHOOL LOGO (Replacing B Monogram)
+   ========================================================================== */
+.header-logo.abps-custom-header-logo > .fsElementContent > a:before,
+.header-logo.abps-custom-header-logo > .fsElementContent > a:after,
+body.home:not(.fsComposeMode) .header-top.header-top-static .header-logo.abps-custom-header-logo > .fsElementContent > a:before,
+body.home:not(.fsComposeMode) .header-top.header-top-static .header-logo.abps-custom-header-logo > .fsElementContent > a:after {
+  display: none !important;
+  content: none !important;
+}
+
+.header-logo.abps-custom-header-logo > .fsElementContent > a.abps-logo-link,
+body.home:not(.fsComposeMode) .header-top.header-top-static .header-logo.abps-custom-header-logo > .fsElementContent > a.abps-logo-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  width: auto !important;
+  height: auto !important;
+  background: none !important;
+  text-decoration: none !important;
+  position: relative !important;
+}
+
+.abps-logo-link .abps-logo-emblem {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  background: #ffffff !important;
+  border: 2px solid #ffc111 !important;
+  box-shadow: 0 4px 14px rgba(0, 34, 13, 0.25) !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+}
+
+.abps-logo-link .abps-logo-wordmark {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  text-align: left !important;
+}
+
+.abps-logo-link .abps-logo-wordmark > span {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  clip: auto !important;
+  clip-path: none !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+}
+
+.abps-logo-link-home .abps-logo-title {
+  font-family: "Cinzel", "Cormorant Garamond", serif !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  letter-spacing: 2.5px !important;
+  line-height: 1.1 !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+.abps-logo-link-home .abps-logo-subtitle {
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 2.2px !important;
+  line-height: 1.2 !important;
+  color: #ffc111 !important;
+  margin-top: 3px !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+.abps-logo-link-internal .abps-logo-title {
+  font-family: "Cinzel", "Cormorant Garamond", serif !important;
+  font-size: 23px !important;
+  font-weight: 800 !important;
+  letter-spacing: 2.2px !important;
+  line-height: 1.1 !important;
+  color: #00350d !important;
+}
+
+.abps-logo-link-internal .abps-logo-subtitle {
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 2px !important;
+  line-height: 1.2 !important;
+  color: #006225 !important;
+  margin-top: 3px !important;
+}
+
+.abps-logo-link-sticky .abps-logo-emblem {
+  width: 52px !important;
+  height: 52px !important;
+}
+
+@media (max-width: 640px) {
+  .abps-logo-link .abps-logo-emblem {
+    width: 46px !important;
+    height: 46px !important;
+  }
+  .abps-logo-link-home .abps-logo-title,
+  .abps-logo-link-internal .abps-logo-title {
+    font-size: 18px !important;
+    letter-spacing: 1.5px !important;
+  }
+  .abps-logo-link-home .abps-logo-subtitle,
+  .abps-logo-link-internal .abps-logo-subtitle {
+    font-size: 9px !important;
+    letter-spacing: 1.4px !important;
+  }
+}
+
+/* Ensure every card crest, panel logo, hero badge, scroller dot, and social post emblem shows the real school logo */
+.fsContainer[class*="logo-"] .panel-logo:before,
+.fsContainer[class*="logo-top"].logo-top-athletics .panel-logo:before,
+.fsContainer[class*="logo-bottom"].logo-bottom-athletics .panel-logo:before,
+span.hr-logo:before,
+span.hr-logo-animated:before,
+span.hr-athletic-logo:before,
+blockquote:has(.blockquote-logo):before,
+.featured-scroller .featured-scroller-navigation li > button span.btn-icon:before,
+.featured-scroller .slideshow-index button span.dot-icon:after,
+.featured-social .post-byline:before,
+body.home:not(.fsComposeMode) .hero.fsResourceElement:before,
+body.home:not(.fsComposeMode) .hero.fsResourceElement:after,
+body.home:not(.fsComposeMode) .hero.fsResourceElement .hero-outer:before {
+  background-image: url("/assets/logo.jpg") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border-radius: 50% !important;
+  background-color: #ffffff !important;
+  border: 2px solid #ffc111 !important;
+  box-shadow: 0 4px 14px rgba(0, 34, 13, 0.28) !important;
+}
+
+/* ==========================================================================
+   2. MENU BUTTON & CLOSE BUTTON OVERLAP FIX
+   ========================================================================== */
+/* Ensure the Close button in the off-canvas menu NEVER renders the 3 hamburger spans over the X icon */
+.mobile-toggle-menu-close .toggle-off-canvas-menu .toggle-off-canvas-icon span {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* When off-canvas menu is open, hide the background header toggle button so it cannot bleed or overlap */
+html.off-canvas-active #fsHeader .header-toggle-menu {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Selected focus element styling refinement */
+div#root:nth-of-type(1) > div#fsPageWrapper:nth-of-type(1) > header#fsHeader:nth-of-type(1) > div#fsEl_11246:nth-of-type(1) > div#fsEl_13660:nth-of-type(1) > div:nth-of-type(1) > div#fsEl_13661:nth-of-type(1) > div#fsEl_13666:nth-of-type(3) > div#fsEl_13667:nth-of-type(1) > div:nth-of-type(1) > button:nth-of-type(1) > div:nth-of-type(1) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   3. PROFESSIONAL INTERACTIVE SEARCH MODAL
+   ========================================================================== */
+@keyframes abpsSearchModalEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.abps-search-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  z-index: 25000 !important;
+  background: rgba(0, 28, 10, 0.78) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 56px 20px 40px !important;
+  overflow-y: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.abps-search-card {
+  width: 100% !important;
+  max-width: 820px !important;
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  border: 2px solid #cb9c0c !important;
+  box-shadow: 0 32px 80px -16px rgba(0, 24, 8, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+  padding: 36px 40px !important;
+  color: #1e293b !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+  animation: abpsSearchModalEnter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.abps-search-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.abps-search-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.abps-search-brand img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #cb9c0c;
+  flex-shrink: 0;
+}
+
+.abps-search-kicker {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #006225;
+  margin-bottom: 2px;
+}
+
+.abps-search-brand h3 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #00350d;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.abps-search-close-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #00350d;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.abps-search-close-btn:hover {
+  background: #004415;
+  border-color: #004415;
+  color: #ffffff;
+}
+
+.abps-search-close-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.abps-search-form {
+  margin-bottom: 20px;
+}
+
+.abps-search-field-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #004415;
+  margin-bottom: 10px;
+}
+
+.abps-search-input-group {
+  display: flex !important;
+  align-items: center !important;
+  background: #ffffff !important;
+  border: 2px solid #006225 !important;
+  border-radius: 14px !important;
+  padding: 6px 8px 6px 18px !important;
+  min-height: 60px !important;
+  box-shadow: 0 8px 24px -8px rgba(0, 98, 37, 0.22) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.abps-search-input-group:focus-within {
+  background: #ffffff !important;
+  border-color: #cb9c0c !important;
+  box-shadow: 0 0 0 4px rgba(255, 193, 17, 0.28) !important;
+}
+
+.abps-search-input-icon {
+  color: #006225;
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.abps-search-input {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 140px !important;
+  height: 46px !important;
+  border: none !important;
+  background: transparent !important;
+  font-size: 17px !important;
+  font-weight: 500 !important;
+  color: #0f172a !important;
+  padding: 10px 8px !important;
+  outline: none !important;
+  box-shadow: none !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.abps-search-input::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+.abps-search-clear-btn {
+  background: #e2e8f0;
+  border: none;
+  color: #475569;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background 0.2s ease;
+}
+
+.abps-search-clear-btn:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
+.abps-search-submit-btn {
+  background: linear-gradient(135deg, #006225 0%, #004415 100%);
+  color: #ffffff;
+  border: 1px solid #004415;
+  border-radius: 10px;
+  padding: 12px 26px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.abps-search-submit-btn:hover {
+  background: #ffc111;
+  border-color: #cb9c0c;
+  color: #00350d;
+}
+
+.abps-search-quick-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
+.abps-search-tags-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #64748b;
+  margin-right: 4px;
+}
+
+.abps-search-tag-chip {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #004415;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.abps-search-tag-chip:hover {
+  background: #006225;
+  border-color: #006225;
+  color: #ffffff;
+}
+
+.abps-search-results {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 20px;
+}
+
+.abps-search-results-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 14px;
+}
+
+.abps-search-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.abps-search-result-item {
+  display: block;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.abps-search-result-item:hover {
+  background: #ffffff;
+  border-color: #006225;
+  box-shadow: 0 8px 20px -8px rgba(0, 98, 37, 0.2);
+  transform: translateY(-2px);
+}
+
+.abps-search-result-meta {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #b68400;
+  margin-bottom: 4px;
+}
+
+.abps-search-result-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: #00350d;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.abps-search-result-desc {
+  font-size: 13px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.abps-search-no-results {
+  padding: 20px;
+  text-align: center;
+  background: #f8fafc;
+  border-radius: 12px;
+  color: #475569;
+}
+
+@media (max-width: 640px) {
+  .abps-search-card {
+    padding: 24px 20px;
+  }
+  .abps-search-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .abps-search-close-btn {
+    align-self: flex-end;
+    margin-top: -44px;
+  }
+  .abps-search-input-group {
+    flex-wrap: wrap;
+    padding: 8px 12px;
+  }
+  .abps-search-submit-btn {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+

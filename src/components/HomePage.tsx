@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   CAMPUSES,
   HOME_FEATURES,
@@ -115,6 +115,20 @@ const TIMELINE_SLIDES = [
     targetPath: '/campuses' as PagePath,
   },
   {
+    id: 'computer-lab',
+    tab: 'Computer Lab',
+    title: 'Computer Lab',
+    summary:
+      'Equipped with high-performance desktop workstations, high-speed internet connectivity, and interactive digital tools where students master coding, IT literacy, and modern computing skills.',
+    image: '/src/assets/images/computer_lab_campus_1794057711383.jpg',
+    details: [
+      'Our state-of-the-art Computer Laboratory provides students with individual modern desktop systems, high-speed broadband internet, and interactive projection displays.',
+      'Guided by dedicated Computer Science and IT instructors, students from primary through ICS intermediate levels gain hands-on experience in programming, office productivity, digital design, and practical board lab coursework.',
+      'Safe, air-conditioned, and purpose-built for collaborative technology education across our campuses in Pakpattan.',
+    ],
+    targetPath: '/campuses' as PagePath,
+  },
+  {
     id: 'academics',
     tab: 'Academics',
     title: 'Primary to Intermediate',
@@ -200,11 +214,19 @@ const ADVANTAGE_ITEMS = [
   },
 ];
 
+const EXTENDED_TIMELINE_SLIDES = [
+  ...TIMELINE_SLIDES,
+  ...TIMELINE_SLIDES,
+  ...TIMELINE_SLIDES,
+];
+
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const [activeProfileIdx, setActiveProfileIdx] = useState(0);
   const [profileFlipped, setProfileFlipped] = useState(false);
   const [flippedPillars, setFlippedPillars] = useState<Record<number, boolean>>({});
-  const [activeTimelineIdx, setActiveTimelineIdx] = useState(0);
+  const [timelineTrackIdx, setTimelineTrackIdx] = useState(TIMELINE_SLIDES.length);
+  const [skipTimelineTransition, setSkipTimelineTransition] = useState(false);
+  const pointerStartX = useRef<number | null>(null);
   const [activeAdvantageIdx, setActiveAdvantageIdx] = useState(0);
   const [dialogContent, setDialogContent] = useState<{
     title: string;
@@ -216,6 +238,50 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   } | null>(null);
 
   const activeProfile = STORY_PROFILES[activeProfileIdx];
+  const slideCount = TIMELINE_SLIDES.length;
+  const activeTimelineIdx = ((timelineTrackIdx % slideCount) + slideCount) % slideCount;
+
+  // Seamless infinite loop normalization after smooth transition completes
+  useEffect(() => {
+    if (timelineTrackIdx < slideCount || timelineTrackIdx >= slideCount * 2) {
+      const timer = window.setTimeout(() => {
+        setSkipTimelineTransition(true);
+        setTimelineTrackIdx(slideCount + (((timelineTrackIdx % slideCount) + slideCount) % slideCount));
+      }, 660);
+      return () => window.clearTimeout(timer);
+    }
+  }, [timelineTrackIdx, slideCount]);
+
+  useEffect(() => {
+    if (skipTimelineTransition) {
+      const id1 = window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          setSkipTimelineTransition(false);
+        });
+      });
+      return () => window.cancelAnimationFrame(id1);
+    }
+  }, [skipTimelineTransition]);
+
+  const handleTimelineTabSelect = (targetModIdx: number) => {
+    setSkipTimelineTransition(false);
+    const currentBase = Math.floor(timelineTrackIdx / slideCount) * slideCount;
+    let candidate = currentBase + targetModIdx;
+    const diff = candidate - timelineTrackIdx;
+    if (diff > slideCount / 2) candidate -= slideCount;
+    if (diff < -slideCount / 2) candidate += slideCount;
+    setTimelineTrackIdx(candidate);
+  };
+
+  const handleTimelinePrev = () => {
+    setSkipTimelineTransition(false);
+    setTimelineTrackIdx((prev) => prev - 1);
+  };
+
+  const handleTimelineNext = () => {
+    setSkipTimelineTransition(false);
+    setTimelineTrackIdx((prev) => prev + 1);
+  };
 
   const handleNav = (e: React.MouseEvent, path: PagePath) => {
     e.preventDefault();
@@ -225,9 +291,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const togglePillar = (idx: number) => {
     setFlippedPillars((prev) => ({ ...prev, [idx]: !prev[idx] }));
   };
-
-  const prevTimelineIdx = (activeTimelineIdx - 1 + TIMELINE_SLIDES.length) % TIMELINE_SLIDES.length;
-  const nextTimelineIdx = (activeTimelineIdx + 1) % TIMELINE_SLIDES.length;
 
   const socialFeedItems = [
     ...UPCOMING_EVENTS.slice(0, 3).map((ev) => ({
@@ -635,11 +698,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                               <li
                                 key={slide.id}
                                 className={`slick-slide ${isCurrent ? 'slick-current slick-active slick-center' : 'slick-active'}`}
-                                style={{ width: '175px' }}
+                                style={{ width: '165px' }}
                               >
                                 <button
                                   type="button"
-                                  onClick={() => setActiveTimelineIdx(idx)}
+                                  onClick={() => handleTimelineTabSelect(idx)}
                                 >
                                   <span>{slide.tab}</span>
                                 </button>
@@ -653,28 +716,52 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Horizontal Split Card Track with Peeking Neighbors */}
+                {/* Smooth Horizontal Sliding Card Track with Peeking Neighbors */}
                 <div
-                  className="fsElementSlideshow slick-initialized slick-slider"
+                  className="fsElementSlideshow slick-initialized slick-slider abps-timeline-viewport"
                   aria-label="Campus and Program Slideshow"
                   initialized=""
+                  onPointerDown={(e) => {
+                    pointerStartX.current = e.clientX;
+                  }}
+                  onPointerUp={(e) => {
+                    if (pointerStartX.current === null) return;
+                    const deltaX = e.clientX - pointerStartX.current;
+                    pointerStartX.current = null;
+                    if (Math.abs(deltaX) > 45) {
+                      if (deltaX < 0) {
+                        handleTimelineNext();
+                      } else {
+                        handleTimelinePrev();
+                      }
+                    }
+                  }}
                 >
-                  <div className="slick-list draggable" style={{ padding: '0px', overflow: 'hidden' }}>
-                    <div className="abps-timeline-track">
-                      {[prevTimelineIdx, activeTimelineIdx, nextTimelineIdx].map((slideIdx, pos) => {
-                        const slide = TIMELINE_SLIDES[slideIdx];
-                        const isCenter = pos === 1;
+                  <div className="slick-list draggable abps-timeline-slick-list">
+                    <div
+                      className={`abps-timeline-track ${skipTimelineTransition ? 'is-resetting' : ''}`}
+                      style={
+                        {
+                          '--active-track-idx': timelineTrackIdx,
+                        } as React.CSSProperties
+                      }
+                    >
+                      {EXTENDED_TIMELINE_SLIDES.map((slide, extIdx) => {
+                        const isCenter = extIdx === timelineTrackIdx;
                         return (
                           <article
-                            key={`${slide.id}-${pos}`}
+                            key={`${slide.id}-ext-${extIdx}`}
                             className={`fsStyleAutoclear fsBoard-31 slick-slide ${isCenter ? 'slick-current slick-active' : ''}`}
-                            style={{ width: isCenter ? '980px' : '600px', cursor: isCenter ? 'default' : 'pointer' }}
+                            style={{ cursor: isCenter ? 'default' : 'pointer' }}
                             onClick={() => {
-                              if (!isCenter) setActiveTimelineIdx(slideIdx);
+                              if (!isCenter) {
+                                setSkipTimelineTransition(false);
+                                setTimelineTrackIdx(extIdx);
+                              }
                             }}
                           >
                             <div className="fsThumbnail fsPostLink">
-                              <img src={slide.image} alt={slide.title} loading="eager" />
+                              <img src={slide.image} alt={slide.title} loading="eager" draggable={false} />
                             </div>
                             <div className="article-text">
                               <div className="fsTitle">{slide.title}</div>
@@ -716,14 +803,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                     <button
                       type="button"
                       className="fsPrevButton fsLeftArrow slick-arrow"
-                      onClick={() => setActiveTimelineIdx(prevTimelineIdx)}
+                      onClick={handleTimelinePrev}
                     >
                       <span>Previous</span>
                     </button>
                     <button
                       type="button"
                       className="fsNextButton fsRightArrow slick-arrow"
-                      onClick={() => setActiveTimelineIdx(nextTimelineIdx)}
+                      onClick={handleTimelineNext}
                     >
                       <span>Next</span>
                     </button>

@@ -1,14 +1,26 @@
 import { PagePath, EventItem } from './schoolData';
 
 export interface AdmissionFormData {
-  fullName: string;
+  fullName?: string;
+  studentName?: string;
   email: string;
   phone: string;
-  program: string;
-  campus: string;
-  previousSchool: string;
-  message: string;
+  program?: string;
+  campus?: string;
+  campusPreference?: string;
+  gradeApplying?: string;
+  previousSchool?: string;
+  message?: string;
+  dob?: string;
+  gender?: string;
+  parentName?: string;
+  relationship?: string;
+  address?: string;
+  additionalInfo?: string;
+  termsAccepted?: boolean;
 }
+
+export type AdmissionFormInput = AdmissionFormData;
 
 export interface ContactFormData {
   contactName: string;
@@ -53,8 +65,11 @@ export function filterEventsByCategory(events: EventItem[], category: string | n
 export function validateAdmissionForm(data: AdmissionFormData): ValidationResult {
   const errors: Record<string, string> = {};
 
-  if (!data.fullName || data.fullName.trim().length < 2) {
-    errors.fullName = 'Please enter your full name.';
+  const name = data.studentName || data.fullName || '';
+  if (!name || name.trim().length < 2) {
+    const err = 'Please enter student full name.';
+    errors.fullName = err;
+    errors.studentName = err;
   }
   if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
     errors.email = 'Please enter a valid email address.';
@@ -62,11 +77,17 @@ export function validateAdmissionForm(data: AdmissionFormData): ValidationResult
   if (!data.phone || data.phone.trim().length < 7) {
     errors.phone = 'Please enter a valid phone number.';
   }
-  if (!data.program || data.program.trim() === '') {
-    errors.program = 'Please select a program of interest.';
+  const prog = data.program || data.gradeApplying || '';
+  if (!prog || prog.trim() === '') {
+    const err = 'Please select a program or grade.';
+    errors.program = err;
+    errors.gradeApplying = err;
   }
-  if (!data.campus || data.campus.trim() === '') {
-    errors.campus = 'Please select a preferred campus.';
+  const camp = data.campus || data.campusPreference || '';
+  if (!camp || camp.trim() === '') {
+    const err = 'Please select a preferred campus.';
+    errors.campus = err;
+    errors.campusPreference = err;
   }
 
   return {

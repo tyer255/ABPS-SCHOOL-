@@ -51,12 +51,12 @@ export const AdmissionsPage: React.FC<AdmissionsPageProps> = ({ onNavigate }) =>
   ) => {
     const { name, value, type } = e.target;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
-    setFormData((prev) => ({
+    setFormData((prev: AdmissionFormInput) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
     if (errors[name as keyof AdmissionFormInput]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
+      setErrors((prev: Partial<Record<keyof AdmissionFormInput, string>>) => ({ ...prev, [name]: undefined }));
     }
   };
 
@@ -70,9 +70,9 @@ export const AdmissionsPage: React.FC<AdmissionsPageProps> = ({ onNavigate }) =>
     setErrors({});
     setSubmittedApplication({
       referenceId: `ABPS-${Math.floor(100000 + Math.random() * 900000)}`,
-      studentName: formData.studentName.trim(),
-      gradeApplying: formData.gradeApplying,
-      campusPreference: formData.campusPreference,
+      studentName: (formData.studentName || '').trim(),
+      gradeApplying: formData.gradeApplying || '',
+      campusPreference: formData.campusPreference || '',
     });
     setFormData(initialForm);
   };

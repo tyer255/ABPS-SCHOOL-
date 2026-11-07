@@ -140,6 +140,57 @@ const SECONDARY_NAV_ITEMS: { label: string; path: PagePath }[] = [
   { label: 'Home', path: '/' },
 ];
 
+const SEARCH_SUGGESTIONS: { title: string; category: string; description: string; path: PagePath }[] = [
+  {
+    title: 'Admissions & Online Application',
+    category: 'Admissions',
+    description: 'Apply online, check admission requirements, fee structure & important dates.',
+    path: '/admissions',
+  },
+  {
+    title: 'Boys Campus (37/SP Road)',
+    category: 'Campuses',
+    description: 'Serving 2,000+ students from Primary to Intermediate with modern Science & Computer Labs.',
+    path: '/campuses',
+  },
+  {
+    title: 'Girls Campus (37/SP Road)',
+    category: 'Campuses',
+    description: 'Dedicated campus for 1,800+ girls with 90+ faculty, libraries & laboratories.',
+    path: '/campuses',
+  },
+  {
+    title: 'Choti Dunya Campus (Early Childhood)',
+    category: 'Campuses',
+    description: 'Specialized Pre-School & Primary wing with activity rooms and digital classrooms.',
+    path: '/campuses',
+  },
+  {
+    title: 'Computer Lab & Science Facilities',
+    category: 'Facilities',
+    description: 'High-speed Computer Lab, Physics, Chemistry & Biology laboratories, and Sports Complex.',
+    path: '/campuses',
+  },
+  {
+    title: 'At A Glance & School Leadership',
+    category: 'About Us',
+    description: 'Read messages from our Director & Deputy Director, our 25-year history, and core values.',
+    path: '/about',
+  },
+  {
+    title: 'School Calendar & Upcoming Events',
+    category: 'Events',
+    description: 'Annual Science Fair, Inter-Campus Sports Championship, Cultural Festival & Debates.',
+    path: '/events',
+  },
+  {
+    title: 'Contact Directory & Campus Visit',
+    category: 'Contact',
+    description: 'Visit 37/SP Road Near Alhamra Chowk, Pakpattan or call 0301 7243663.',
+    path: '/contact',
+  },
+];
+
 export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -177,9 +228,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
     if (menuOpen) {
       htmlClasses.push('off-canvas-active', 'off-canvas-menu');
     }
-    if (searchOpen) {
-      htmlClasses.push('off-canvas-active', 'off-canvas-search');
-    }
     html.className = htmlClasses.join(' ');
 
     const bodyClasses = [
@@ -200,7 +248,24 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
     }
     body.className = bodyClasses.join(' ');
     body.setAttribute('loaded', '');
+    body.style.overflow = menuOpen || searchOpen ? 'hidden' : '';
+
+    return () => {
+      body.style.overflow = '';
+    };
   }, [isHome, menuOpen, searchOpen]);
+
+  // Close menu or search modal on Escape key
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSearchOpen(false);
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   // Sticky header on scroll
   useEffect(() => {
@@ -230,28 +295,40 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return;
     setMenuOpen(false);
     setSearchOpen(false);
-    if (q.includes('admis') || q.includes('apply') || q.includes('fee')) {
+    if (!q) {
+      onNavigate('/about');
+      return;
+    }
+    if (q.includes('admis') || q.includes('apply') || q.includes('fee') || q.includes('form')) {
       onNavigate('/admissions');
-    } else if (q.includes('campus') || q.includes('boy') || q.includes('girl') || q.includes('choti')) {
+    } else if (q.includes('campus') || q.includes('boy') || q.includes('girl') || q.includes('choti') || q.includes('lab') || q.includes('computer') || q.includes('science') || q.includes('library')) {
       onNavigate('/campuses');
-    } else if (q.includes('event') || q.includes('science') || q.includes('sport') || q.includes('news')) {
+    } else if (q.includes('event') || q.includes('sport') || q.includes('news') || q.includes('calendar') || q.includes('fair')) {
       onNavigate('/events');
-    } else if (q.includes('contact') || q.includes('phone') || q.includes('visit') || q.includes('map')) {
+    } else if (q.includes('contact') || q.includes('phone') || q.includes('visit') || q.includes('map') || q.includes('address')) {
       onNavigate('/contact');
     } else {
       onNavigate('/about');
     }
   };
 
+  const filteredSearchResults = searchQuery.trim()
+    ? SEARCH_SUGGESTIONS.filter(
+        (item) =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : SEARCH_SUGGESTIONS.slice(0, 6);
+
   const activeBanner = BANNERS[currentSlide] || BANNERS[0];
   const internalHero = !isHome ? INTERNAL_HERO_CONFIG[currentPath] : null;
 
   return (
     <>
-      {/* Briarcrest Off-Canvas Menu & Search (#fsMenu) */}
+      {/* Briarcrest Off-Canvas Menu (#fsMenu) */}
       <div id="fsMenu">
         <div className="fsMenu fsStyleAutoclear" id="fsEl_11256" data-settings-id="11254" data-use-new="true">
           <div
@@ -284,11 +361,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                                 className="toggle-off-canvas-menu"
                                 onClick={() => setMenuOpen(false)}
                               >
-                                <div className="toggle-off-canvas-icon">
-                                  <span />
-                                  <span />
-                                  <span />
-                                </div>
+                                <div className="toggle-off-canvas-icon" />
                                 <span>
                                   Close<span> Menu</span>
                                 </span>
@@ -300,7 +373,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                               <button
                                 type="button"
                                 className="toggle-search"
-                                onClick={() => setSearchOpen(true)}
+                                onClick={() => {
+                                  setMenuOpen(false);
+                                  setSearchOpen(true);
+                                }}
                               >
                                 <span>Search</span>
                               </button>
@@ -449,57 +525,156 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                 </div>
               </div>
 
-              {/* Off-Canvas Search Block */}
-              <div className="fsElement fsContainer off-canvas-block off-canvas-search" id="fsEl_11925" data-use-new="true">
-                <div className="fsElementContent">
-                  <div className="fsElement fsEmbed mobile-toggle-search-close" id="fsEl_11926" data-use-new="true">
-                    <div className="fsElementContent">
-                      <button
-                        type="button"
-                        className="toggle-search-close"
-                        onClick={() => setSearchOpen(false)}
-                      >
-                        <div className="toggle-off-canvas-icon" />
-                        <span>Close Search</span>
-                      </button>
-                    </div>
-                  </div>
-                  <div className="fsElement fsSearchElement fsSearchForm site-search-off-canvas" id="fsEl_11927" data-use-new="true">
-                    <div className="fsElementContent">
-                      <form onSubmit={handleSearchSubmit} role="search" aria-label="Site Search">
-                        <label htmlFor="abps-off-canvas-search" className="fsStyleSROnly">
-                          Search AL BADAR PUBLIC HIGH SCHOOL
-                        </label>
-                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                          <input
-                            id="abps-off-canvas-search"
-                            type="search"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search Admissions, Campuses, Events, Leadership..."
-                            style={{
-                              flex: 1,
-                              padding: '16px 22px',
-                              borderRadius: '8px',
-                              border: '2px solid #006225',
-                              background: '#ffffff',
-                              color: '#00350d',
-                              fontSize: '18px',
-                            }}
-                          />
-                          <button type="submit" className="button-yellow-solid" style={{ cursor: 'pointer' }}>
-                            Search
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Legacy Off-Canvas Search Block (kept empty so main.css rules don't glitch) */}
+              <div className="fsElement fsContainer off-canvas-block off-canvas-search" id="fsEl_11925" data-use-new="true" style={{ display: 'none' }} />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Top-Level Professional Search Modal Overlay */}
+      {searchOpen && (
+        <div
+          className="abps-search-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site Search"
+          onClick={() => setSearchOpen(false)}
+        >
+          <div className="abps-search-card" onClick={(e) => e.stopPropagation()}>
+            <div className="abps-search-card-header">
+              <div className="abps-search-brand">
+                <img src={SCHOOL_IDENTITY.logoUrl} alt={SCHOOL_IDENTITY.name} />
+                <div>
+                  <span className="abps-search-kicker">AL BADAR PUBLIC HIGH SCHOOL</span>
+                  <h3>Search School Information &amp; Directory</h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="abps-search-close-btn"
+                aria-label="Close Search"
+                onClick={() => setSearchOpen(false)}
+              >
+                <span>Close</span>
+                <span className="abps-search-close-icon">✕</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSearchSubmit} role="search" aria-label="Site Search" className="abps-search-form">
+              <label htmlFor="abps-off-canvas-search" className="abps-search-field-label">
+                Type below to search admissions, campuses, computer lab, fees, or events:
+              </label>
+              <div className="abps-search-input-group">
+                <span className="abps-search-input-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </span>
+                <input
+                  id="abps-off-canvas-search"
+                  type="text"
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Type anything here (e.g. Admissions, Computer Lab, Girls Campus, Contact)..."
+                  className="abps-search-input"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="abps-search-clear-btn"
+                    onClick={() => setSearchQuery('')}
+                    aria-label="Clear search query"
+                  >
+                    ✕
+                  </button>
+                )}
+                <button type="submit" className="abps-search-submit-btn">
+                  Search
+                </button>
+              </div>
+            </form>
+
+            {/* Quick Filter Tags */}
+            <div className="abps-search-quick-tags">
+              <span className="abps-search-tags-label">Quick Topics:</span>
+              {[
+                { label: 'Admissions 2026', query: 'Admissions', path: '/admissions' as PagePath },
+                { label: 'Boys & Girls Campus', query: 'Campuses', path: '/campuses' as PagePath },
+                { label: 'Choti Dunya', query: 'Choti Dunya', path: '/campuses' as PagePath },
+                { label: 'Computer Lab', query: 'Computer Lab', path: '/campuses' as PagePath },
+                { label: 'School Calendar', query: 'Events', path: '/events' as PagePath },
+                { label: 'Contact & Map', query: 'Contact', path: '/contact' as PagePath },
+              ].map((tag) => (
+                <button
+                  key={tag.label}
+                  type="button"
+                  className="abps-search-tag-chip"
+                  onClick={() => setSearchQuery(tag.query)}
+                >
+                  {tag.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Instant Search Results / Directory Preview */}
+            <div className="abps-search-results">
+              <div className="abps-search-results-title">
+                {searchQuery.trim()
+                  ? `Search Results for "${searchQuery}" (${filteredSearchResults.length})`
+                  : 'Recommended Pages & Information'}
+              </div>
+              {filteredSearchResults.length > 0 ? (
+                <div className="abps-search-results-grid">
+                  {filteredSearchResults.map((item) => (
+                    <a
+                      key={item.title}
+                      href={item.path}
+                      className="abps-search-result-item"
+                      onClick={(e) => handleLinkClick(e, item.path)}
+                    >
+                      <div className="abps-search-result-meta">{item.category}</div>
+                      <div className="abps-search-result-heading">{item.title}</div>
+                      <p className="abps-search-result-desc">{item.description}</p>
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div className="abps-search-no-results">
+                  <p style={{ marginBottom: '12px', fontWeight: 600, color: '#00350d' }}>
+                    Searching for &ldquo;{searchQuery}&rdquo; across AL BADAR PUBLIC HIGH SCHOOL:
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+                    <button
+                      type="button"
+                      className="abps-search-submit-btn"
+                      onClick={(e) => handleLinkClick(e, '/admissions')}
+                    >
+                      Check Admissions Info
+                    </button>
+                    <button
+                      type="button"
+                      className="abps-search-tag-chip"
+                      onClick={(e) => handleLinkClick(e, '/campuses')}
+                    >
+                      Explore Campuses &amp; Labs
+                    </button>
+                    <button
+                      type="button"
+                      className="abps-search-tag-chip"
+                      onClick={(e) => handleLinkClick(e, '/contact')}
+                    >
+                      Contact School Office
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Briarcrest Main Header & Hero (#fsHeader) */}
       <header id="fsHeader" className="fsHeader">
@@ -510,10 +685,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
               <div className="fsElementContent">
                 <div className="fsElement fsLayout fsThreeColumnLayout header-top-columns fsStyleAutoclear" id="fsEl_13661" data-use-new="true">
                   <div className="fsDiv fsStyleColumn fsStyleColumn-1 fsStyleAutoclear" id="fsEl_13662">
-                    <div className="fsElement fsContent header-logo" id="fsEl_13663" data-use-new="true">
+                    <div className="fsElement fsContent header-logo abps-custom-header-logo" id="fsEl_13663" data-use-new="true">
                       <div className="fsElementContent">
-                        <a href="/" onClick={(e) => handleLinkClick(e, '/')}>
-                          <span>{SCHOOL_IDENTITY.name}</span>
+                        <a href="/" onClick={(e) => handleLinkClick(e, '/')} className="abps-logo-link abps-logo-link-home">
+                          <img src={SCHOOL_IDENTITY.logoUrl} alt={SCHOOL_IDENTITY.name} className="abps-logo-emblem" />
+                          <div className="abps-logo-wordmark">
+                            <span className="abps-logo-title">AL BADAR</span>
+                            <span className="abps-logo-subtitle">PUBLIC HIGH SCHOOL</span>
+                          </div>
                         </a>
                       </div>
                     </div>
@@ -535,7 +714,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                         <button
                           type="button"
                           className="toggle-off-canvas-menu"
-                          onClick={() => setMenuOpen(true)}
+                          onClick={() => setMenuOpen((prev) => !prev)}
                         >
                           <div className="toggle-off-canvas-icon">
                             <span />
@@ -568,10 +747,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                     </div>
                   </div>
                   <div className="fsDiv fsStyleColumn fsStyleColumn-2 fsStyleAutoclear" id="fsEl_11700">
-                    <div className="fsElement fsContent header-logo" id="fsEl_11880" data-use-new="true">
+                    <div className="fsElement fsContent header-logo abps-custom-header-logo" id="fsEl_11880" data-use-new="true">
                       <div className="fsElementContent">
-                        <a href="/" onClick={(e) => handleLinkClick(e, '/')}>
-                          <span>{SCHOOL_IDENTITY.name}</span>
+                        <a href="/" onClick={(e) => handleLinkClick(e, '/')} className="abps-logo-link abps-logo-link-internal">
+                          <img src={SCHOOL_IDENTITY.logoUrl} alt={SCHOOL_IDENTITY.name} className="abps-logo-emblem" />
+                          <div className="abps-logo-wordmark">
+                            <span className="abps-logo-title">AL BADAR</span>
+                            <span className="abps-logo-subtitle">PUBLIC HIGH SCHOOL</span>
+                          </div>
                         </a>
                       </div>
                     </div>
@@ -582,7 +765,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                         <button
                           type="button"
                           className="toggle-off-canvas-menu"
-                          onClick={() => setMenuOpen(true)}
+                          onClick={() => setMenuOpen((prev) => !prev)}
                         >
                           <div className="toggle-off-canvas-icon">
                             <span />
@@ -621,10 +804,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                   </div>
                 </div>
                 <div className="fsDiv fsStyleColumn fsStyleColumn-2 fsStyleAutoclear" id="fsEl_13684">
-                  <div className="fsElement fsContent header-logo" id="fsEl_13685" data-use-new="true">
+                  <div className="fsElement fsContent header-logo abps-custom-header-logo" id="fsEl_13685" data-use-new="true">
                     <div className="fsElementContent">
-                      <a href="/" onClick={(e) => handleLinkClick(e, '/')}>
-                        <span>{SCHOOL_IDENTITY.name}</span>
+                      <a href="/" onClick={(e) => handleLinkClick(e, '/')} className="abps-logo-link abps-logo-link-sticky">
+                        <img src={SCHOOL_IDENTITY.logoUrl} alt={SCHOOL_IDENTITY.name} className="abps-logo-emblem" />
                       </a>
                     </div>
                   </div>
@@ -635,7 +818,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                       <button
                         type="button"
                         className="toggle-off-canvas-menu"
-                        onClick={() => setMenuOpen(true)}
+                        onClick={() => setMenuOpen((prev) => !prev)}
                       >
                         <div className="toggle-off-canvas-icon">
                           <span />
